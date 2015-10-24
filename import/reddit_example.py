@@ -1,5 +1,4 @@
 import praw
-from pprint import pprint
 
 r = praw.Reddit('keyvalue_graphdata by u/theshadoka ver 0.1')
 submissions = r.get_subreddit('leagueoflegends').get_hot(limit=3)

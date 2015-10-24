@@ -1,0 +1,25 @@
+1)
+
+In der Shell folgenden Befehl eingeben:
+
+"sudo apt-get install python-pip"
+
+2)
+
+Anschließend
+
+"pip install praw"
+
+eingeben (sollte kein sudo benötigen).
+
+Fertig.
+
+3) (nicht für Installation benötigt)
+
+Nun kann das Beispiel-Skript für den Reddit-Zugriff ausgeführt werden, mit "python reddit_example.py"
+
+Definitiv lesenswert für den Umgang mit den Redditdaten ist die Website von PRAW
+
+https://praw.readthedocs.org/en/stable/
+https://praw.readthedocs.org/en/stable/pages/writing_a_bot.html
+https://praw.readthedocs.org/en/stable/pages/comment_parsing.html

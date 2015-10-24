@@ -1,0 +1,41 @@
+1)
+Entpacken der Zip-Datei an beliebigem Ort
+
+2)
+Ant installieren mit:
+
+"sudo apt-get install ant"
+
+3)
+Mit Shell in das Voldemort-Verzeichnis wechseln und in der Shell
+
+"ant"
+
+eingeben.
+
+(Bei mir hatte Ubuntu gesagt, dass ich JAVA_HOME nicht gesetzt hatte, obwohl ich das eigentlich hatte.
+Nachdem ich dann aber Eclipse mit "sudo apt-get eclipse" installiert hatte, ging es dann aber irgendwie)
+
+4) (nicht für Installation benötigt)
+
+Voldemort ist nun installiert und lässt sich mit folgendem Befehl starten(wenn man sich im obersten Ordner im Voldemort-Verzeichnis befindet):
+
+"bin/voldemort-server.sh conf/single_node_cluster"
+
+Dies startet einen simplen Server der einen String als Key und Value nimmt.
+Zum Starten eines Clients um ein bisschen rumzuspielen siehe
+
+http://www.project-voldemort.com/voldemort/quickstart.html
+
+5) (nicht für Installation benötigt)
+
+Diesem Repository liegt ein Ordner "reddit_config" bei, der kann auch zum Starten eines Voldemort-Servers genutzt werden:
+
+"bin/voldemort-server.sh $PATH_TO_DIR/reddit_config", wobei PATH_TO_DIR davon abhängig ist, wo sich dieses Repository befindet.
+
+Darin sind 2 Stores (sozusagen Tabellen in einem relationalen System) definiert (siehe stores.xml).
+
+AuthorStore: Key = "string", Value = ["string"] (Liste von Strings)
+ContentStore Key = "string", Value = {"author":"string", "prev":"string", "next":["string"]}
+
+{} sind Maps, [] sind Listen -> wenn man sich das Python-Beispiel anschaut, wird das vielleicht ein bisschen klarer.
