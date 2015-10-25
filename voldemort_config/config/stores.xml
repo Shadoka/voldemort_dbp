@@ -33,7 +33,7 @@
     </key-serializer>
     <value-serializer>
       <type>json</type>
-      <schema-info>{"author":"string", "prev":"string", "next":["string"]}</schema-info>
+      <schema-info>{"author":"string", "prev":"string"}</schema-info>
     </value-serializer>
     <hinted-handoff-strategy>consistent-handoff</hinted-handoff-strategy>    
   </store>

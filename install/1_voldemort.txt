@@ -36,6 +36,9 @@ Diesem Repository liegt ein Ordner "reddit_config" bei, der kann auch zum Starte
 Darin sind 2 Stores (sozusagen Tabellen in einem relationalen System) definiert (siehe stores.xml).
 
 AuthorStore: Key = "string", Value = ["string"] (Liste von Strings)
-ContentStore Key = "string", Value = {"author":"string", "prev":"string", "next":["string"]}
+ContentStore Key = "string", Value = {"author":"string", "prev":"string"}
 
 {} sind Maps, [] sind Listen -> wenn man sich das Python-Beispiel anschaut, wird das vielleicht ein bisschen klarer.
+
+Meiner Meinung nach ist das alles, was wir benötigen, um die Knoten und Kanten darzustellen, die Prof. Kleiner haben will.
+Natürlich kann man aber noch zusätzliche Informationen speichern.

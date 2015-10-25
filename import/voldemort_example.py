@@ -9,9 +9,9 @@ authorKey = "shadoka"
 authorValue = ["qwert", "asdf"]
 # vom author verfasster inhalt, also submissions + comments
 contentKey1 = "qwert"
-contentValue1 = {"author":"shadoka", "prev":None, "next":["asdf"]}
+contentValue1 = {"author":"shadoka", "prev":None}
 contentKey2 = "asdf"
-contentValue2 = {"author":"shadoka", "prev":"qwert", "next":None}
+contentValue2 = {"author":"shadoka", "prev":"qwert"}
 # daten in die stores schreiben
 authorStore.put(authorKey, authorValue)
 contentStore.put(contentKey1, contentValue1)
