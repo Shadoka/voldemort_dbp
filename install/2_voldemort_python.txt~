@@ -7,7 +7,7 @@ Anschließend irgendwo entpacken, falls man das Zip runtergeladen hat.
 
 Folgende 3 Pakete installieren:
 
-"sudo apt-get install curl automake autoconf libtool"
+"sudo apt-get install curl automake autoconf"
 
 Anschließend in das Protobuf-Verzeichnis wechseln und folgende Befehle eingeben:
 
@@ -25,11 +25,7 @@ In Voldemort-Verzeichnis wechseln und Server starten:
 
 "bin/voldemort-server clients/python/tests/voldemort_config"
 
-Benötigte Abhängigkeit installieren:
-
-"sudo apt-get install python-setuptools"
-
-Anschließend in das clients/python-Verzeichnis wechseln und folgendes Python-Skript ausführen:
+Anschließend folgendes Python-Skript ausführen:
 
 "sudo python setup.py install"
 
