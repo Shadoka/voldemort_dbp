@@ -14,7 +14,7 @@
     </key-serializer>
     <value-serializer>
       <type>json</type>
-      <schema-info>{"lastActivity":"float32", "content":["string"], "friends":["string"], "name":"string"}</schema-info>
+      <schema-info>["string"]</schema-info>
     </value-serializer>
     <hinted-handoff-strategy>consistent-handoff</hinted-handoff-strategy>    
   </store>
@@ -33,9 +33,8 @@
     </key-serializer>
     <value-serializer>
       <type>json</type>
-      <schema-info>{"title":"string", "date":"float32"}</schema-info>
+      <schema-info>{"author":"string", "prev":"string"}</schema-info>
     </value-serializer>
     <hinted-handoff-strategy>consistent-handoff</hinted-handoff-strategy>    
   </store>
 </stores>
-
