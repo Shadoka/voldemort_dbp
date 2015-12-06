@@ -31,6 +31,7 @@ def min_degree():
 		if degree_results.get(key) < minimal[0]:
 			minimal = (degree_results.get(key), key)
 	print("Die geringste Degree Centrality besitzt " + minimal[1] + " mit " + str(minimal[0]))
+	return minimal
 
 def max_degree():
 	voldemortResultAllAuthors = authorStore.get("_authors")
@@ -45,6 +46,7 @@ def max_degree():
 		if degree_results.get(key) > maximal[0]:
 			maximal = (degree_results.get(key), key)
 	print("Die maximale Degree Centrality besitzt " + maximal[1] + " mit " + str(maximal[0]))
+	return maximal
 
 if len(sys.argv) != 2:
 	print(usage)

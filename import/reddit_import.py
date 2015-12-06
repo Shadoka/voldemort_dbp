@@ -25,7 +25,6 @@ def traverseComments(authors, content_per_author, content, prevAuthor, subTitle,
 				content_per_author[commentAuthor] = {"lastActivity":created, "content":[commentId], "friends":[prevAuthor], "name":commentAuthor}
 			else:
 				cpa.get('content').append(commentId)
-				cpa.get('content').append(prevAuthor)
 				if cpa.get('lastActivity') < created:
 					cpa['lastActivity'] = created
 				content_per_author[commentAuthor] = cpa
