@@ -16,7 +16,6 @@ def traverseComments(authors, content_per_author, content, prevAuthor, subTitle,
 		for c in comments:
 			created = c.created
 			commentAuthor = str(c.author)
-			content_per_author.get(prevAuthor).get('friends').append(commentAuthor)
 			commentId = str(c.id)
 			authors.add(commentAuthor)
 			content[commentId] = {"title":subTitle, "date":created}
@@ -51,7 +50,7 @@ def persist(authors, content_per_author, content):
 def importData():
 	print("==> import gestartet")
 	submissions = getHottestInSubreddit("leagueoflegends", 2)
-	authors = set() #brauche ich das set wirklich? hab doch content_per_author
+	authors = set()
 	content_per_author = {}
 	content = {}
 	for sub in submissions:
@@ -61,7 +60,6 @@ def importData():
 		sub.replace_more_comments(limit=None, threshold=0)
 		authors.add(subAuthor)
 		content[subId] = {"title":subTitle, "date":sub.created}
-		# jetzt nicht nur die contentIds, sondern lastActivity+friends
 		current = content_per_author.get(subAuthor)
 		if current == None:
 			content_per_author[subAuthor] = {"lastActivity":sub.created, "content":[subId], "friends":[], "name":subAuthor}

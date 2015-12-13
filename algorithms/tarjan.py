@@ -3,7 +3,7 @@ import voldemort
 authorStore = voldemort.StoreClient('authorStore', [{'0', 6666}])
 stack = []
 components = []
-index = 0
+index = 1
 
 def tarjan():
 	voldemortResult = authorStore.get("_authors")
@@ -12,7 +12,7 @@ def tarjan():
 	for author in allAuthors.get("content"):
 		nodeKey = str(author)
 		temp = authorStore.get(nodeKey)
-		nodeValue = [temp[0][0], -1, -1, False, []]
+		nodeValue = [temp[0][0], -1, -1, False]
 		#node = Tupel aus den Autorendaten, index(int), lowlink(int), onStack(boolean)
 		nodes[nodeKey] = nodeValue
 	for nodeKey in nodes:
@@ -22,13 +22,13 @@ def tarjan():
 	for scc in components:
 		print("==> NEUE KOMPONENTE")
 		for node in scc:
-			print(node[2])
+			print("Index: " + str(node[1]) + ", Lowlink: " + str(node[2]) + ", Name: " + node[0].get('name'))
+			if len(scc) > 10 and node[1] == node[2]:
+				print(str(node[0].get("name")))
 	print("Insgesamt sind es " + str(len(components)) + " Komponenten")
 
-def strongconnect(node, allNodes, pre=None):
+def strongconnect(node, allNodes):
 	global index
-	if pre != None:
-		node[4].append(pre)
 	node[1] = index
 	node[2] = index
 	index += 1
@@ -36,12 +36,11 @@ def strongconnect(node, allNodes, pre=None):
 	node[3] = True
 	for kanteKey in node[0].get("friends"):
 		kanteNode = allNodes.get(str(kanteKey))
-		if kanteNode not in node[4]:
-			if kanteNode[1] == -1:
-				strongconnect(kanteNode, allNodes, node)
-				node[2] = min(node[2], kanteNode[2])
-			elif kanteNode[3] == True:
-				node[2] = min(node[2], kanteNode[1])
+		if kanteNode[1] == -1:
+			strongconnect(kanteNode, allNodes)
+			node[2] = min(node[2], kanteNode[2])
+		elif kanteNode[3] == True:
+			node[2] = min(node[2], kanteNode[1])
 	if node[1] == node[2]:
 		scc = []
 		prevNode = None
