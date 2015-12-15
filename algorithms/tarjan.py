@@ -23,8 +23,6 @@ def tarjan():
 		print("==> NEUE KOMPONENTE")
 		for node in scc:
 			print("Index: " + str(node[1]) + ", Lowlink: " + str(node[2]) + ", Name: " + node[0].get('name'))
-			if len(scc) > 10 and node[1] == node[2]:
-				print(str(node[0].get("name")))
 	print("Insgesamt sind es " + str(len(components)) + " Komponenten")
 
 def strongconnect(node, allNodes):

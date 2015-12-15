@@ -2,9 +2,11 @@ import voldemort
 import sys
 
 authorStore = voldemort.StoreClient('authorStore', [{'0', 6666}])
-usage = "Usage:\n<name>:\tCalculates the degree centrality of the given node\nmin:\tCalculates the minimal degree centrality of all the nodes in the graph"
+usage = "Usage:\n<name>:\tCalculates the degree centrality of the given node\nmin:\tCalculates the minimal degree centrality of all the nodes in the graph\nmax:\tCalculates the maximal degree centrality of all the nodes in the graph"
 
-def degree_internal(author):
+# Calculates the degree centrality of the specified author.
+# author: The author to calculate the degree centrality for
+def degree(author):
 	voldemortResultAuthor = authorStore.get(author)
 	voldemortResultAllAuthors = authorStore.get("_authors")
 	allAuthors = voldemortResultAllAuthors[0][0]
@@ -14,45 +16,43 @@ def degree_internal(author):
 	result = amountEdges / amountOfAllNodes
 	return (author, result)
 
-def degree(author):
-	result = degree_internal(author)
-	print(result[0] + " has a centrality of " + str(result[1]))
-
-def min_degree():
+# Calculates the degree of all authors in the database and returns them.
+def calculate_degree_of_all_authors():
 	voldemortResultAllAuthors = authorStore.get("_authors")
 	allAuthors = voldemortResultAllAuthors[0][0]
 	authorNames = allAuthors["content"]
 	degree_results = {}
 	for author in authorNames:
-		author_degree = degree_internal(str(author))
+		author_degree = degree(str(author))
 		degree_results[str(author)] = author_degree[1]
+	return degree_results
+
+# Calculates the minimal degree centrality of all nodes in the graph.
+def min_degree():
+	all_degrees = calculate_degree_of_all_authors()
 	minimal = (1.0, "")
-	for key in degree_results:
-		if degree_results.get(key) < minimal[0]:
-			minimal = (degree_results.get(key), key)
-	print("Die geringste Degree Centrality besitzt " + minimal[1] + " mit " + str(minimal[0]))
+	for key in all_degrees:
+		if all_degrees.get(key) < minimal[0]:
+			minimal = (all_degrees.get(key), key)
 	return minimal
 
+# Calculates the maximal degree centrality of all nodes in the graph.
 def max_degree():
-	voldemortResultAllAuthors = authorStore.get("_authors")
-	allAuthors = voldemortResultAllAuthors[0][0]
-	authorNames = allAuthors["content"]
-	degree_results = {}
-	for author in authorNames:
-		author_degree = degree_internal(str(author))
-		degree_results[str(author)] = author_degree[1]
+	all_degrees = calculate_degree_of_all_authors()
 	maximal = (0.0, "")
-	for key in degree_results:
-		if degree_results.get(key) > maximal[0]:
-			maximal = (degree_results.get(key), key)
-	print("Die maximale Degree Centrality besitzt " + maximal[1] + " mit " + str(maximal[0]))
+	for key in all_degrees:
+		if all_degrees.get(key) > maximal[0]:
+			maximal = (all_degrees.get(key), key)
 	return maximal
 
 if len(sys.argv) != 2:
 	print(usage)
 elif sys.argv[1] == "min":
-	min_degree()
+	minimal = min_degree()
+	print("Die geringste Degree Centrality besitzt " + minimal[1] + " mit " + str(minimal[0]))
 elif sys.argv[1] == "max":
-	max_degree()
+	maximal = max_degree()
+	print("Die maximale Degree Centrality besitzt " + maximal[1] + " mit " + str(maximal[0]))
 else:
-	degree(sys.argv[1])
+	degree = degree(sys.argv[1])
+	print(degree[0] + " has a centrality of " + str(degree[1]))
