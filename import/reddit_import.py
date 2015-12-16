@@ -38,6 +38,7 @@ def traverseComments(authors, content_per_author, content, prevAuthor, subTitle,
 				content_per_author[commentAuthor] = {"lastActivity":created, "content":[commentId], "friends":[prevAuthor], "name":commentAuthor}
 			else:
 				cpa.get('content').append(commentId)
+				cpa.get('friends').append(prevAuthor)
 				if cpa.get('lastActivity') < created:
 					cpa['lastActivity'] = created
 				content_per_author[commentAuthor] = cpa
@@ -80,6 +81,7 @@ def persist(authors, content_per_author, content):
 # amount: 	 The amount of threads to fetch
 def importData(subreddit, amount=1):
 	print("==> import gestartet")
+	print(amount)
 	submissions = getHottestInSubreddit(subreddit, amount)
 	authors = set()
 	content_per_author = {}
