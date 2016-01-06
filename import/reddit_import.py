@@ -1,6 +1,7 @@
 import voldemort
 import praw
 import sys
+import time
 
 user_agent = "keyvalue_graphdata by u/theshadoka ver 0.1"
 # reddit connection
@@ -35,13 +36,15 @@ def traverseComments(authors, content_per_author, content, prevAuthor, subTitle,
 			content[commentId] = {"title":subTitle, "date":created}
 			cpa = content_per_author.get(commentAuthor)
 			if cpa == None:
-				content_per_author[commentAuthor] = {"lastActivity":created, "content":[commentId], "friends":[prevAuthor], "name":commentAuthor}
+				content_per_author[commentAuthor] = {"lastActivity":created, "content":[commentId], "friends":[prevAuthor], "ingoing":[], "name":commentAuthor}
 			else:
 				cpa.get('content').append(commentId)
 				cpa.get('friends').append(prevAuthor)
 				if cpa.get('lastActivity') < created:
 					cpa['lastActivity'] = created
 				content_per_author[commentAuthor] = cpa
+			content_previous_author = content_per_author.get(prevAuthor)
+			content_previous_author.get('ingoing').append(commentAuthor)
 			traverseComments(authors, content_per_author, content, commentAuthor, subTitle, c.replies)
 
 # Persists all authors it is given into the database.
@@ -49,11 +52,12 @@ def traverseComments(authors, content_per_author, content, prevAuthor, subTitle,
 # content_per_author: Map: 	author -> data of the author
 def persistAuthors(authors, content_per_author):
 	# little hack to know which authors are stored in the database
-	authorStore.put("_authors", {"lastActivity":None, "content":authors, "friends":None, "name":"_authors"})
+	authorStore.put("_authors", {"lastActivity":None, "content":authors, "friends":None, "ingoing":None, "name":"_authors"})
 	for author in authors:
 		content = content_per_author.get(author)
 		# make the list of friends of an author unique
 		content['friends'] = list(set(content.get('friends')))
+		content['ingoing'] = list(set(content.get('ingoing')))
 		authorStore.put(author, content)
 	print("==> authoren sind persistiert")
 
@@ -80,9 +84,11 @@ def persist(authors, content_per_author, content):
 # subreddit: The subreddit to fetch the data from
 # amount: 	 The amount of threads to fetch
 def importData(subreddit, amount=1):
+	timer = time.time
 	print("==> import gestartet")
+	start = timer()
 	print(amount)
-	submissions = getHottestInSubreddit(subreddit, amount)
+	submissions = getHottestInSubreddit(subreddit, 100)
 	authors = set()
 	content_per_author = {}
 	content = {}
@@ -95,7 +101,7 @@ def importData(subreddit, amount=1):
 		content[subId] = {"title":subTitle, "date":sub.created}
 		current = content_per_author.get(subAuthor)
 		if current == None:
-			content_per_author[subAuthor] = {"lastActivity":sub.created, "content":[subId], "friends":[], "name":subAuthor}
+			content_per_author[subAuthor] = {"lastActivity":sub.created, "content":[subId], "friends":[], "ingoing":[], "name":subAuthor}
 		else:
 			current.get('content').append(subId)
 			if current.get('lastActivity') < sub.created:
@@ -103,7 +109,9 @@ def importData(subreddit, amount=1):
 			content_per_author[subAuthor] = current
 		traverseComments(authors, content_per_author, content, subAuthor, subTitle, sub.comments)
 	persist(list(authors), content_per_author, content)
+	end = timer()
 	print("==> import abgeschlossen")
+	print("Laufzeit: " + str(end - start) + " Sekunden")
 
 if len(sys.argv) == 1:
 	print(usage)

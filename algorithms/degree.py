@@ -1,14 +1,14 @@
 import voldemort
 import sys
+import time
 
 authorStore = voldemort.StoreClient('authorStore', [{'0', 6666}])
-usage = "Usage:\n<name>:\tCalculates the degree centrality of the given node\nmin:\tCalculates the minimal degree centrality of all the nodes in the graph\nmax:\tCalculates the maximal degree centrality of all the nodes in the graph"
+usage = "Usage:\n<name>:\tCalculates the degree centrality of the given node\nmin:\tCalculates the minimal degree centrality of all the nodes in the graph\nmax:\tCalculates the maximal degree centrality of all the nodes in the graph\nin <name>:\tCalculates the ingoing degree of an author\nout <name>:\tCalculates the outgoing degree of an author"
 
 # Calculates the degree centrality of the specified author.
 # author: 			The author to calculate the degree centrality for
-# allAuthorsMap: 	If degree is called from min or max a prefetched map is included for improved performance
-def degree(author, allAuthorsMap=None):
-	indeg = in_degree(author, allAuthorsMap)
+def degree(author):
+	indeg = in_degree(author)
 	outdeg = out_degree(author)
 	return (author, indeg[1] + outdeg[1])
 
@@ -24,33 +24,20 @@ def out_degree(author):
 
 # Calculates the ingoing degree of an author.
 # author: The author to calculate the ingoing degree for
-# allAuthorsMap: 	If degree is called from min or max a prefetched map is included for improved performance
-def in_degree(author, allAuthorsMap=None):
+def in_degree(author):
 	node = authorStore.get(author)[0][0]
 	allAuthors = authorStore.get("_authors")[0][0]
-	incomingEdges = 0
-	for currentName in allAuthors["content"]:
-		currentAuthor = None
-		if allAuthorsMap != None:
-			currentAuthor = allAuthorsMap[currentName]
-		else:
-			currentAuthor = authorStore.get(str(currentName))[0][0]
-		if author in currentAuthor.get("friends"):
-			incomingEdges += 1
 	amountOfAllNodes = len(allAuthors["content"]) + 0.0
-	result = incomingEdges / (amountOfAllNodes - 1)
+	result = len(node["ingoing"]) / (amountOfAllNodes - 1)
 	return (author, result)
 
 # Calculates the degree of all authors in the database and returns them.
 def calculate_degree_of_all_authors():
 	allAuthors = authorStore.get("_authors")[0][0]
 	authorNames = allAuthors["content"]
-	allAuthorsMap = {}
-	for name in authorNames:
-		allAuthorsMap[name] = authorStore.get(str(name))[0][0]
 	degree_results = {}
 	for author in authorNames:
-		author_degree = degree(str(author), allAuthorsMap)
+		author_degree = degree(str(author))
 		degree_results[str(author)] = author_degree[1]
 	return degree_results
 
@@ -72,14 +59,40 @@ def max_degree():
 			maximal = (all_degrees.get(key), key)
 	return maximal
 
-if len(sys.argv) != 2:
-	print(usage)
-elif sys.argv[1] == "min":
-	minimal = min_degree()
-	print("Die geringste Degree Centrality besitzt " + minimal[1] + " mit " + str(minimal[0]))
-elif sys.argv[1] == "max":
-	maximal = max_degree()
-	print("Die maximale Degree Centrality besitzt " + maximal[1] + " mit " + str(maximal[0]))
+timer = time.time
+if len(sys.argv) == 2:
+	if sys.argv[1] == "min":
+		start = timer()
+		minimal = min_degree()
+		end = timer()
+		print("Die geringste Degree Centrality besitzt " + minimal[1] + " mit " + str(minimal[0]))
+		print("Laufzeit: " + str(end - start) + " Sekunden")
+	elif sys.argv[1] == "max":
+		start = timer()
+		maximal = max_degree()
+		end = timer()
+		print("Die maximale Degree Centrality besitzt " + maximal[1] + " mit " + str(maximal[0]))
+		print("Laufzeit: " + str(end - start) + " Sekunden")
+	else:
+		start = timer()
+		degree = degree(sys.argv[1])
+		end = timer()
+		print(degree[0] + " has a centrality of " + str(degree[1]))
+		print("Laufzeit: " + str(end - start) + " Sekunden")
+elif len(sys.argv) == 3:
+	if sys.argv[1] == "in":
+		start = timer()
+		indeg = in_degree(sys.argv[2])
+		end = timer()
+		print(indeg[0] + " besitzt eine ingoing Degree Centrality von " + (str(indeg[1])))
+		print("Laufzeit: " + str(end - start) + " Sekunden")
+	elif sys.argv[1] == "out":
+		start = timer()
+		outdeg = out_degree(sys.argv[2])
+		end = timer()
+		print(outdeg[0] + " besitzt eine outgoing Degree Centrality von " + str(outdeg[1]))
+		print("Laufzeit: " + str(end - start) + " Sekunden")
+	else:
+		print(usage)
 else:
-	degree = degree(sys.argv[1])
-	print(degree[0] + " has a centrality of " + str(degree[1]))
+	print(usage)
